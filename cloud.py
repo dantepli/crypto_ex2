@@ -23,9 +23,9 @@ class Cloud:
         self.nonce = nonce
         with open(filename, mode='rb') as f:
             self.pt = f.read()
-            self.countf = Counter.new(64, self.nonce)
-            self.crypto = AES.new(self.key, AES.MODE_CTR, counter=self.countf)
-            self.ciphertext = self.crypto.encrypt(self.pt)
+            countf = Counter.new(64, self.nonce)
+            aes = AES.new(self.key, AES.MODE_CTR, counter=countf)
+            self.ciphertext = aes.encrypt(self.pt)
 
     def Length(self):
         """
@@ -48,14 +48,8 @@ class Cloud:
         Return the previous byte from self.ciphertext (before the re-write).
         """
         old_byte = self.ciphertext[position]
-        # easy mode
         self.pt = self.pt[:position] + newbyte + self.pt[position + 1:]
-        self.countf = Counter.new(64, self.nonce)
-        self.crypto = AES.new(self.key, AES.MODE_CTR, counter=self.countf)
-        self.ciphertext = self.crypto.encrypt(self.pt)
+        countf = Counter.new(64, self.nonce)
+        aes = AES.new(self.key, AES.MODE_CTR, counter=countf)
+        self.ciphertext = aes.encrypt(self.pt)
         return old_byte
-
-        # countf = Counter.new(64, self.nonce, initial_value=position)
-        # encrypted_byte = self.crypto.encrypt().
-        # self.ciphertext = self.ciphertext[:position] + encrypted_byte + self.ciphertext[position + 1:-1]
-        # return old_byte
